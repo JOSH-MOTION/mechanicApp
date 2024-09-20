@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "1006067306383",
+    "project_id": "mechanicwik-a64a4",
+    "storage_bucket": "mechanicwik-a64a4.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1006067306383:android:4c3223ccfd253c201b85fa",
+        "android_client_info": {
+          "package_name": "com.wik.mechanic"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDWe101UXpBPaj8fDpIjAXQyFmD58HKy0o"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
