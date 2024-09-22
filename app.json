@@ -1,5 +1,6 @@
 {
   "expo": {
+    "permissions": ["location"],
     "name": "mechanicApp",
     "slug": "mechanicApp",
     "version": "1.0.0",
@@ -32,6 +33,11 @@
     ],
     "experiments": {
       "typedRoutes": true
+    },
+    
+    "extra": {
+      "googleApiKey": "AIzaSyC7XkEHHOo5fmeV_gnYR9r1LpDYoc45lzQ",
+      "geopifyApiKey": "3c44c81e7fa24b0b949d0bddb1ee92cb"
     }
   }
 }

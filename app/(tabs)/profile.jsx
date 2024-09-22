@@ -62,7 +62,7 @@ const ProfileScreen = () => {
 
               <View className="bg-gray-800 p-4 rounded-lg">
                 <Text className="text-white text-xl font-semibold">Account ID:</Text>
-                <Text className="text-white text-lg mt-2">{user.accountid}</Text>
+                <Text className="text-white text-lg mt-2">{user.accountId}</Text>
               </View>
             </View>
           ) : (

@@ -1,7 +1,7 @@
 import React from 'react';
 import { Tabs } from 'expo-router';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
-import { faHome, faMapMarkerAlt, faHistory, faBell, faUser } from '@fortawesome/free-solid-svg-icons';
+import { faHome, faMapMarkerAlt, faHistory, faBell, faUser, faWrench } from '@fortawesome/free-solid-svg-icons';
 import { View, Text } from 'react-native';
 
 const TabIcon = ({ icon, color, focused, name }) => {
@@ -103,6 +103,22 @@ const _layout = () => {
             ),
           }}
         />
+        <Tabs.Screen 
+  name='registration'
+  options={{
+    title: "RegisterMechanic",
+    headerShown: false,
+    tabBarIcon: ({ color, focused }) => (
+      <TabIcon
+        icon={faWrench}
+        color={color}
+        focused={focused}
+        name="Register"
+      />
+    ),
+  }}
+/>
+
       </Tabs>
     </>
   );
