@@ -40,21 +40,24 @@ const MechanicRegistration = () => {
 
   const handleRegister = async () => {
     try {
-      // Ensure the email is included in the registration logic
-      const mechanic = await registerMechanic(name, email, location, contact);
-      console.log('Registered mechanic:', mechanic);
-      // Reset fields or show success message
-      setName('');
-      setMechanicEmail(''); 
-      setLocation({ latitude: 37.78825, longitude: -122.4324 }); // Reset to default
-      setContact('');
-      setLocationInput('');
-      setErrorMessage(''); // Clear any previous error messages
+        const mechanicId = "some_unique_id"; 
+        const mechanic = await registerMechanic(name, mechanicEmail, mechanicId, location.latitude, location.longitude, contact);
+        console.log('Registered mechanic:', mechanic);
+        // Reset fields or show success message
+        setName('');
+        setMechanicEmail('');
+        setLocation({ latitude: 37.78825, longitude: -122.4324 }); // Reset to default
+        setContact('');
+        setLocationInput('');
+        setErrorMessage(''); // Clear any previous error messages
     } catch (error) {
-      console.error(error);
-      setErrorMessage('Failed to register mechanic. Please try again.');
+        console.error(error);
+        setErrorMessage('Failed to register mechanic. Please try again.');
     }
-  };
+};
+
+  
+  
 
   return (
     <SafeAreaView className="bg-primary h-full">

@@ -1,65 +1,35 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, Text, TextInput, Button, ScrollView, ActivityIndicator } from 'react-native';
 import MapView, { Marker } from 'react-native-maps';
 import { Link } from 'expo-router';
-import axios from 'axios';
-import Constants from 'expo-constants';
+import { getMechanics } from '../../lib/appwrite'; // Import your getMechanics function
 
 const MapPage = () => {
   const [mechanics, setMechanics] = useState([]);
   const [region, setRegion] = useState({
-    latitude: 37.78825,
-    longitude: -122.4324,
-    latitudeDelta: 0.0922,
-    longitudeDelta: 0.0421,
+    latitude: 7.75, // Centered around Ghana
+    longitude: -0.5,
+    latitudeDelta: 5,
+    longitudeDelta: 5,
   });
-  const [searchQuery, setSearchQuery] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
-  const geopifyApiKey = Constants.expoConfig.extra.geopifyApiKey; // Get API key from environment
 
-  // Fetch mechanics based on search location
-  const fetchMechanics = async (location) => {
-    setLoading(true);
-    setError('');
-    try {
-      const response = await axios.get(
-        `https://api.geopify.com/v1/geocode/autocomplete?text=${location}&apiKey=${geopifyApiKey}`
-      );
-      
-      const fetchedMechanics = response.data.features.map((feature, index) => ({
-        id: index,
-        name: feature.properties.formatted,
-        latitude: feature.geometry.coordinates[1],
-        longitude: feature.geometry.coordinates[0],
-        rating: (Math.random() * 3 + 2).toFixed(1), // Dummy rating
-      }));
-      setMechanics(fetchedMechanics);
-
-      // Set map region to the first mechanic's location
-      if (fetchedMechanics.length > 0) {
-        setRegion({
-          latitude: fetchedMechanics[0].latitude,
-          longitude: fetchedMechanics[0].longitude,
-          latitudeDelta: 0.0922,
-          longitudeDelta: 0.0421,
-        });
+  useEffect(() => {
+    const fetchMechanics = async () => {
+      setLoading(true);
+      try {
+        const fetchedMechanics = await getMechanics();
+        setMechanics(fetchedMechanics);
+      } catch (error) {
+        setError('Failed to fetch mechanics');
+      } finally {
+        setLoading(false);
       }
-    } catch (error) {
-      console.error('Error fetching mechanics:', error);
-      setError('Failed to fetch mechanics. Please try again.');
-    } finally {
-      setLoading(false);
-    }
-  };
+    };
 
-  const handleSearch = () => {
-    if (searchQuery.trim()) {
-      fetchMechanics(searchQuery);
-    } else {
-      setError('Please enter a location to search.');
-    }
-  };
+    fetchMechanics();
+  }, []);
 
   return (
     <View style={styles.container}>
@@ -69,14 +39,6 @@ const MapPage = () => {
           <Text style={{ color: 'white' }}>Profile</Text>
         </Link>
       </View>
-
-      <TextInput
-        style={styles.input}
-        placeholder="Search location..."
-        value={searchQuery}
-        onChangeText={setSearchQuery}
-      />
-      <Button title="Search" onPress={handleSearch} />
 
       {loading && <ActivityIndicator size="large" color="#0000ff" />}
       {error && <Text style={{ color: 'red' }}>{error}</Text>}
@@ -88,20 +50,20 @@ const MapPage = () => {
       >
         {mechanics.map((mechanic) => (
           <Marker
-            key={mechanic.id}
+            key={mechanic.$id}
             coordinate={{ latitude: mechanic.latitude, longitude: mechanic.longitude }}
-            title={mechanic.name}
-            description={`Rating: ${mechanic.rating}`}
+            title={mechanic.mechanicname}
+            description={`Email: ${mechanic.mechanic_email}`} // Adjust as needed
           />
         ))}
       </MapView>
 
-      {mechanics.length === 0 && !loading && <Text>No mechanics found. Try another location.</Text>}
+      {mechanics.length === 0 && !loading && <Text>No mechanics found.</Text>}
 
       <ScrollView style={styles.scrollView}>
         {mechanics.map((mechanic) => (
-          <View key={mechanic.id} style={styles.mechanicCard}>
-            <Text style={styles.mechanicName}>{mechanic.name}</Text>
+          <View key={mechanic.$id} style={styles.mechanicCard}>
+            <Text style={styles.mechanicName}>{mechanic.mechanicname}</Text>
             <Text style={styles.mechanicRating}>Rating: {mechanic.rating}</Text>
             <Button title="Book Now" onPress={() => { /* Add booking logic */ }} />
           </View>
