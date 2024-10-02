@@ -1,19 +1,23 @@
 import React, { useState } from 'react';
+import { Platform } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { View, Text, TextInput, Button, ScrollView } from 'react-native';
+import { View, Text, TextInput, Button, ScrollView,Image } from 'react-native';
 import MapView, { Marker } from 'react-native-maps';
 import axios from 'axios';
 import { registerMechanic } from '../../lib/appwrite'; // Assuming this is where your registration logic is
 import Constants from 'expo-constants';
 import { StatusBar } from 'expo-status-bar';
+import * as ImagePicker from 'expo-image-picker';
 
 const MechanicRegistration = () => {
   const [name, setName] = useState('');
   const [mechanicEmail, setMechanicEmail] = useState('');
   const [location, setLocation] = useState({ latitude: 37.78825, longitude: -122.4324 }); // Default location
   const [contact, setContact] = useState('');
+  const [specialization, setSpecialization] = useState('');
   const [locationInput, setLocationInput] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
+  const [image, setImage] = useState(null);
 
   const geopifyApiKey = Constants.expoConfig.extra.geopifyApiKey;
 
@@ -38,10 +42,25 @@ const MechanicRegistration = () => {
     }
   };
 
+  const handleImagePicker = async () => {
+    const permissionResult = await ImagePicker.requestMediaLibraryPermissionsAsync();
+
+    if (permissionResult.granted === false) {
+      alert('Permission to access camera roll is required!');
+      return;
+    }
+
+    const pickerResult = await ImagePicker.launchImageLibraryAsync();
+    
+    if (!pickerResult.canceled) {
+      setImage(pickerResult.assets[0]); // Store the selected image
+    }
+  };
+
   const handleRegister = async () => {
     try {
         const mechanicId = "some_unique_id"; 
-        const mechanic = await registerMechanic(name, mechanicEmail, mechanicId, location.latitude, location.longitude, contact);
+        const mechanic = await registerMechanic(name, mechanicEmail, mechanicId, location.latitude, location.longitude, contact, specialization, image);
         console.log('Registered mechanic:', mechanic);
         // Reset fields or show success message
         setName('');
@@ -49,6 +68,8 @@ const MechanicRegistration = () => {
         setLocation({ latitude: 37.78825, longitude: -122.4324 }); // Reset to default
         setContact('');
         setLocationInput('');
+        setSpecialization('');
+        setImage(null);
         setErrorMessage(''); // Clear any previous error messages
     } catch (error) {
         console.error(error);
@@ -85,6 +106,12 @@ const MechanicRegistration = () => {
             value={contact}
             onChangeText={setContact}
           />
+           <TextInput
+            className="border border-gray-300 p-2 mb-4 rounded"
+            placeholder="Specialization" // New specialization input field
+            value={specialization}
+            onChangeText={setSpecialization}
+          />
           <TextInput
             className="border border-gray-300 p-2 mb-4 rounded"
             placeholder="Enter Location"
@@ -93,7 +120,14 @@ const MechanicRegistration = () => {
           />
 
           <Button title="Search Location" onPress={handleLocationSearch} className="text-sm font-pbold text-secondary mb-4" />
+          <Button title="Pick an Image" onPress={handleImagePicker} className="text-sm font-pbold text-secondary mb-4" />
 
+          {image && image.uri && ( // Check if image and image.uri exist
+          <Image 
+            source={{ uri: image.uri }} 
+            style={{ width: 100, height: 100 }} 
+          />
+        )}
           <Text className="text-lg mb-4">Select Your Location</Text>
           <MapView
             className="w-full h-72 mb-5"
